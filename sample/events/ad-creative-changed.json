@@ -1,0 +1,28 @@
+{
+  "Records": [
+    {
+      "messageId": "0f2be413-43fc-412e-9d56-a7b23a845635",
+      "receiptHandle": "AQEB8KLsALCKQiznxcJQCgq0sdfPj+FQBH8h6X78tKPEBfn4QRcoXJSAwRHRo3SUNpQOgKsHbH0ApDtYJiCJ3gQFck0ZdvjQCnNKQ5ZqyfOaySyJxrr9/fkZn3QVYHKwsLvvXgglGWEkLV2wT2hjWRo8cp8nYflfTA4W+Wxm4km4fjtFpQAxMsss5TYqvYO4vhndh97hKgNUKXpKKKLt1cd3Pn/WLWHHUqZHhx+qgmvxn9jPkYhpSSSv5lxpKSipgKYOxJKzCOGg5mm6dzOfPkDQe/uCziwM6YF8JP2kyd4xADogAWVH6w6/J1/lwGlU6397VL3qJ/JiFywRe/U5cPhP6GwUAWDXToLaYGkMxrYe4mG+Q4WpL9VwH9qGWYPCsudjPK9cbddqyV6bTYdyzz4Z+A==",
+      "body": "{\"ad_account_id\":\"act_120949723189008\"}",
+      "attributes": {
+        "ApproximateReceiveCount": "1",
+        "SentTimestamp": "1650292314305",
+        "SenderId": "AIDAJQR6QDGQ7PATMSYEY",
+        "ApproximateFirstReceiveTimestamp": "1650292314310"
+      },
+      "messageAttributes": {
+        "event_type": {
+          "stringValue": "ad-creatives-changed",
+          "stringListValues": [],
+          "binaryListValues": [],
+          "dataType": "String"
+        }
+      },
+      "md5OfMessageAttributes": "01955da53714fdb23bc9d80bea463fee",
+      "md5OfBody": "9496486fe2c9a475f907ee4b32b81c2e",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:us-east-2:696318035277:stats-calc-q-dev",
+      "awsRegion": "us-east-2"
+    }
+  ]
+}

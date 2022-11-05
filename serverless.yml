@@ -1,0 +1,255 @@
+# serverless.yml
+
+service: dynamo-stats
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${self:custom.serverlessStage}
+  region: us-east-2
+  memorySize: 256
+  timeout: 900
+  iam:
+    role:
+      statements:
+        - ${file(iam/secrets-manager.yml):SecretsManagerIAM}
+        - ${file(iam/dynamo-db-iam.yml):DynamoDBIAM}
+  environment:
+    DYNAMODB_LEADS_STATS_TABLE_NAME: ${env:DYNAMODB_LEADS_STATS_TABLE_NAME}
+    DYNAMODB_ASSETS_STATS_TABLE_NAME: ${env:DYNAMODB_ASSETS_STATS_TABLE_NAME}
+    DYNAMODB_ROI_MONTHLY_TABLE_NAME: ${env:DYNAMODB_ROI_MONTHLY_TABLE_NAME}
+    DYNAMODB_MESSAGE_EVENT_LEADS_TABLE_NAME: ${env:DYNAMODB_MESSAGE_EVENT_LEADS_TABLE_NAME}
+    DYNAMODB_CALL_EVENT_LEADS_TABLE_NAME: ${env:DYNAMODB_CALL_EVENT_LEADS_TABLE_NAME}
+    DYNAMODB_EMAIL_EVENT_LEADS_TABLE_NAME: ${env:DYNAMODB_EMAIL_EVENT_LEADS_TABLE_NAME}
+    DYNAMODB_GENERIC_ASSETS_STATS_TABLE_NAME: ${env:DYNAMODB_GENERIC_ASSETS_STATS_TABLE_NAME}
+    DYNAMODB_BUSINESS_OFFER_TABLE_NAME: ${env:DYNAMODB_BUSINESS_OFFER_TABLE_NAME}
+    DAILY_STATS_SNS_TOPIC: ${env:DAILY_STATS_SNS_TOPIC}
+    SLS_STAGE: ${env:SLS_STAGE}
+    API_INSIGHTS_UPDATE: ${env:API_INSIGHTS_UPDATE}
+    FB_GRAPH_API: ${env:FB_GRAPH_API}
+    UPDATE_BATCH_SIZE: ${env:UPDATE_BATCH_SIZE}
+
+functions:
+  batchTransferOpenedMailsJob:
+    handler: src/mail-transfer.transferOpenedMailsHandler
+    reservedConcurrency: 1
+    events:
+      - schedule:
+          rate: cron(30 5-12 * * ? *)
+  batchTransferClickedMailsJob:
+    handler: src/mail-transfer.transferClickedMailsHandler
+    reservedConcurrency: 1
+    events:
+      - schedule:
+          rate: cron(30 5-12 * * ? *)
+  batchTransferDeliveredMailsJob:
+    handler: src/mail-transfer.transferDeliveredMailsHandler
+    reservedConcurrency: 1
+    events:
+      - schedule:
+          rate: cron(30 5-12 * * ? *)
+  batchTransferSpammedReportMailsJob:
+    handler: src/mail-transfer.transferSpammedReportMailsHandler
+    reservedConcurrency: 1
+    events:
+      - schedule:
+          rate: cron(30 5-12 * * ? *)
+  batchTransferUnsubscribedMailsJob:
+    handler: src/mail-transfer.transferUnsubscribedMailsHandler
+    reservedConcurrency: 1
+    events:
+      - schedule:
+          rate: cron(30 5-12 * * ? *)
+  batchTransferDialedCallsJob:
+    handler: src/call-transfer.transferDialedCallsHandler
+    reservedConcurrency: 1
+    events:
+      - schedule:
+          rate: cron(30 5-12 * * ? *)
+  batchTransferAnsweredCallsJob:
+    handler: src/call-transfer.transferAnsweredCallsHandler
+    reservedConcurrency: 1
+    events:
+      - schedule:
+          rate: cron(30 5-12 * * ? *)
+  batchTransferSentMessagesJob:
+    handler: src/message-transfer.transferSentMessagesHandler
+    reservedConcurrency: 1
+    events:
+      - schedule:
+          rate: cron(30 5-12 * * ? *)
+  batchTransferReceivedMessagesJob:
+    handler: src/message-transfer.transferReceivedMessagesHandler
+    reservedConcurrency: 1
+    events:
+      - schedule:
+          rate: cron(30 5-12 * * ? *)
+  adsInsightCalc:
+    handler: src/function.adsInsightsHandler
+    reservedConcurrency: 1
+    events:
+      - schedule:
+          rate: rate(3 hours)
+  calc:
+    handler: src/function.handler
+    reservedConcurrency: 1
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - StatsCalcQueue
+              - Arn
+
+  businessOfferJob:
+    handler: src/business-offers.handler
+    reservedConcurrency: 1
+    events:
+      - schedule:
+          rate: rate(1 day)
+
+resources:
+  Resources:
+    StatsCalcQueue:
+      Type: 'AWS::SQS::Queue'
+      Properties:
+        QueueName: 'stats-calc-q-${self:custom.serverlessStage}'
+        VisibilityTimeout: 900
+    SNSSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint:
+          {
+            'Fn::Join':
+              [
+                '',
+                [
+                  'arn:aws:sqs:${self:provider.region}:',
+                  { 'Ref': 'AWS::AccountId' },
+                  ':${self:resources.Resources.StatsCalcQueue.Properties.QueueName}',
+                ],
+              ],
+          }
+        Protocol: SQS
+        TopicArn: ${env:DAILY_STATS_SNS_TOPIC}
+        RawMessageDelivery: true
+    SnsQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: 'sns.amazonaws.com'
+              Action: sqs:SendMessage
+              Resource:
+                {
+                  'Fn::Join':
+                    [
+                      '',
+                      [
+                        'arn:aws:sqs:${self:provider.region}:',
+                        { 'Ref': 'AWS::AccountId' },
+                        ':${self:resources.Resources.StatsCalcQueue.Properties.QueueName}',
+                      ],
+                    ],
+                }
+              Condition:
+                ArnEquals:
+                  'aws:SourceArn': '${env:DAILY_STATS_SNS_TOPIC}'
+        Queues:
+          - Ref: StatsCalcQueue
+
+    ### dynamodb table schema
+    CallEventLeadsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.serverlessStage}-call-event-leads
+        BillingMode: PROVISIONED
+        AttributeDefinitions:
+          - AttributeName: guid
+            AttributeType: S
+          - AttributeName: lead_id
+            AttributeType: N
+        KeySchema:
+          - AttributeName: guid
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        GlobalSecondaryIndexes:
+          - IndexName: lead_id-index
+            KeySchema:
+              - AttributeName: lead_id
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+        Tags:
+          - Key: Environment
+            Value: ${self:custom.serverlessStage}
+    EmailEventLeadsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.serverlessStage}-email-event-leads
+        BillingMode: PROVISIONED
+        AttributeDefinitions:
+          - AttributeName: guid
+            AttributeType: S
+          - AttributeName: lead_id
+            AttributeType: N
+        KeySchema:
+          - AttributeName: guid
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: lead_id-index
+            KeySchema:
+              - AttributeName: lead_id
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+        Tags:
+          - Key: Environment
+            Value: ${self:custom.serverlessStage}
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+    MessageEventLeadsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.serverlessStage}-message-event-leads
+        BillingMode: PROVISIONED
+        AttributeDefinitions:
+          - AttributeName: guid
+            AttributeType: S
+          - AttributeName: lead_id
+            AttributeType: N
+        KeySchema:
+          - AttributeName: guid
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: lead_id-index
+            KeySchema:
+              - AttributeName: lead_id
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+        Tags:
+          - Key: Environment
+            Value: ${self:custom.serverlessStage}
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+custom:
+  serverlessStage: ${opt:stage, 'dev'}

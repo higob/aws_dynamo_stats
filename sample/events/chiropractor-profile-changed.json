@@ -1,0 +1,28 @@
+{
+  "Records": [
+    {
+      "messageId": "88a0bc70-65c3-4340-9e67-634661a6ce29",
+      "receiptHandle": "AQEB9ElyQfq4z2sEH6PO/kqq2ournYQAEXLOR0w/V7x/XTTiw2O+azn4DS4TjMX0hzksZFHxBw3jnGzMpeaG94R0bUtDnfvrvoP+rvlF5tC8OB03mcF0pcQcZqpQW6Ky632KlbjugOL0NQfs16E7a7D5ONVxjh3oJz0067mNTyJCcczIl7Dtmx02Uaf6WLAt91GtBDy2VuHqZs4o40GT+XQ4WkXiIDRP53Asm1w/JhSTZCgCwiXAWDeDM+p1C313gbZJcteITEAHNgBuDNg6uYUSw+NRLoS4rU1+Ohfb1KMrYEUbiyUh4ZXZue07mvCK5bCE8iPVsuvdmbu45sjo6XW1JJIcA7CR0wDnPPWTQUyqASP9OAFauQo6uG2mIt/HYDRnniSxRM1syHdinJq6M/wpYQ==",
+      "body": "{\"avatar\":\"business/159.jpeg\",\"chiropractor_guid\":\"159\"}",
+      "attributes": {
+        "ApproximateReceiveCount": "1",
+        "SentTimestamp": "1631968262556",
+        "SenderId": "AIDAJQR6QDGQ7PATMSYEY",
+        "ApproximateFirstReceiveTimestamp": "1631968262557"
+      },
+      "messageAttributes": {
+        "event_type": {
+          "stringValue": "chiropractor-profile-changed",
+          "stringListValues": [],
+          "binaryListValues": [],
+          "dataType": "String"
+        }
+      },
+      "md5OfMessageAttributes": "cd4caf9d896aef264d11e359bd94621c",
+      "md5OfBody": "530e54a95d4652a3b9d5a540743d3bb1",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:us-east-2:696318035277:stats-calc-q-dev",
+      "awsRegion": "us-east-2"
+    }
+  ]
+}

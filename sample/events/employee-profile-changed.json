@@ -1,0 +1,28 @@
+{
+  "Records": [
+    {
+      "messageId": "10f8b3cf-1b51-4af8-8548-4c2ac391364f",
+      "receiptHandle": "AQEBB6GfnJJoIzdb7f2fD52Fu9j6GaByhaAngIER67FJMF1fFile/J497MN/IvRKrsklWN0MtOWCVaYr/fqXe+ASO1WOIwRx7ea3hkaZ0AJ9UweDoRNvaWIZn/MiJlEJ8kMAookGnNiJCMW4JAuj1lXeBr4iJarGvtvtaHIlVaK3DQwA3nz7zFOl82yn5EWP9BTQ+caFhbzgyZQwKLRnk0Q0egItu7AO0QLKfJumYx/Xwh/R/YMhqYiJXajy0wRPXRC/58fGDDBlr0Qbz/M596RWg9kM0+hwWWnvW36NqcyavoObd+ATlKrDjBQHyOmy0zt0I+ICMPX9FYV1FDkpYKapI5SGGpMsI4OqR9y+eoSkTFLvRVzCWeXpSVhSxUDor04ljae1wRjKhIDOunMvRINFtQ==",
+      "body": "{\"fullname\":\"hklo1\",\"email\":\"hklo+4@gmail.com\",\"mobilePhone\":\"+11222222222\",\"profilePhoto\":\"4da3e58e-92a7-468c-9339-0500cf143d2b/chiropractic/a6692bf32750.svg\",\"dashboard_uuid\":\"4da3e58e-92a7-468c-9339-0500cf143d2b\",\"chiropractor_guid\":\"4\"}",
+      "attributes": {
+        "ApproximateReceiveCount": "1",
+        "SentTimestamp": "1628921222760",
+        "SenderId": "AIDAJQR6QDGQ7PATMSYEY",
+        "ApproximateFirstReceiveTimestamp": "1628921222761"
+      },
+      "messageAttributes": {
+        "event_type": {
+          "stringValue": "employee-profile-changed",
+          "stringListValues": [],
+          "binaryListValues": [],
+          "dataType": "String"
+        }
+      },
+      "md5OfBody": "0c4381bef945e501c2d17817ce2281b3",
+      "md5OfMessageAttributes": "9a5ecce7783a5da708f35a254e28050a",
+      "eventSource": "aws:sqs",
+      "eventSourceARN": "arn:aws:sqs:us-east-2:696318035277:stats-calc-q-dev",
+      "awsRegion": "us-east-2"
+    }
+  ]
+}

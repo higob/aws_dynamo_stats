@@ -1,0 +1,48 @@
+{
+  "name": "dynamo-stats",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "cross-env NODE_ENV=staging AWS_PROFILE=bl AWS_REGION=us-east-2 node sample/local.js",
+    "ci:deploy-dev": "serverless deploy",
+    "ci:deploy-prod": "serverless deploy --stage prod",
+    "deploy": "cross-env AWS_PROFILE=bl NODE_ENV=staging serverless deploy",
+    "deploy:prod": "cross-env AWS_PROFILE=bl NODE_ENV=production serverless deploy --stage prod",
+    "format": "prettier --write . --config .prettierrc --ignore-path .prettierignore",
+    "lint": "eslint . --ext .js --fix",
+    "prepare": "husky install"
+  },
+  "author": "Higob",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.76.0",
+    "@aws-sdk/client-secrets-manager": "3.76.0",
+    "@aws-sdk/util-dynamodb": "3.76.0",
+    "axios": "0.26.0",
+    "dynamodb-update-expression": "^0.1.21",
+    "moment": "2.29.3",
+    "mysql": "^2.18.1",
+    "mysql-async-simple": "^1.0.3",
+    "node-redshift-v2": "^1.0.0",
+    "pino": "7.11.0",
+    "uuid": "^8.3.1"
+  },
+  "devDependencies": {
+    "cross-env": "7.0.3",
+    "custom-env": "^2.0.1",
+    "dotenv": "16.0.0",
+    "eslint": "8.14.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "husky": "7.0.4",
+    "lint-staged": "12.4.0",
+    "pino-pretty": "7.6.1",
+    "prettier": "2.6.2",
+    "serverless": "3.15.2"
+  },
+  "lint-staged": {
+    "*.js": "npm run lint"
+  }
+}

@@ -1,0 +1,17 @@
+DynamoDBIAM:
+  Effect: Allow
+  Action:
+    - dynamodb:Query
+    - dynamodb:PutItem
+    - dynamodb:UpdateItem
+    - dynamodb:BatchWriteItem
+  Resource:
+    - arn:aws:dynamodb:us-east-2:696318035277:table/${env:DYNAMODB_LEADS_STATS_TABLE_NAME}
+    - arn:aws:dynamodb:us-east-2:696318035277:table/${env:DYNAMODB_ASSETS_STATS_TABLE_NAME}
+    - arn:aws:dynamodb:us-east-2:696318035277:table/${env:DYNAMODB_ASSETS_STATS_TABLE_NAME}/*
+    - arn:aws:dynamodb:us-east-2:696318035277:table/${env:DYNAMODB_GENERIC_ASSETS_STATS_TABLE_NAME}
+    - arn:aws:dynamodb:us-east-2:696318035277:table/${env:DYNAMODB_ROI_MONTHLY_TABLE_NAME}
+    - arn:aws:dynamodb:us-east-2:696318035277:table/${env:DYNAMODB_MESSAGE_EVENT_LEADS_TABLE_NAME}
+    - arn:aws:dynamodb:us-east-2:696318035277:table/${env:DYNAMODB_CALL_EVENT_LEADS_TABLE_NAME}
+    - arn:aws:dynamodb:us-east-2:696318035277:table/${env:DYNAMODB_EMAIL_EVENT_LEADS_TABLE_NAME}
+    - arn:aws:dynamodb:us-east-2:696318035277:table/${env:DYNAMODB_BUSINESS_OFFER_TABLE_NAME}
